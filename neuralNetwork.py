@@ -24,4 +24,6 @@ class neuralNetwork:
     
     
 samp = neuralNetwork()
-print(samp.getOuput(np.matrix(np.arange(900).reshape(900,1))))
+out = samp.getOuput(np.matrix(np.arange(900).reshape(900,1)))
+print("output layer: ","\n", out)
+print("The number is likely: ",np.argmax(out,0)[0,0]+1)
