@@ -7,7 +7,7 @@ from mlxtend.data import loadlocal_mnist
 def main():
     input();
     getMNIST()
-
+'''
 def input():
     img = Image.open("eight.png", "r")
 
@@ -48,6 +48,7 @@ def input():
 
     test = blackLine2
     test = toGreyScale(test)
+    print(test)
 
     x, y = len(blackLine2), len(blackLine2[0]);
     finalImage = np.array(finalImage)
@@ -60,6 +61,7 @@ def input():
             sum += 1;
     imgg = Image.fromarray(data).resize((30, 30), Image.ANTIALIAS);
     #imgg.show()
+    print(finalImage[0]);
 
 def search(arr):
     length = len(arr)
@@ -80,24 +82,22 @@ def toGreyScale(matrix):
         for j in range(width):
             matrix[j][i] = round((765 - matrix[j][i])/765, 2)
     return matrix
+'''
 
 def getMNIST():
-    #data = MNIST("train-images.idx3-ubyte")
-    #image = data.load_training();
-
     image, label = loadlocal_mnist(
         "./train-images.idx3-ubyte",
         "./train-labels.idx1-ubyte")
-    
     new_label = [];
 
     for i in range(label.shape[0]):
         for j in range(label[i]):
-            z = np.zeros((10,), dtype = int)
-            z[label[i,]] = 1
+            z = np.zeros((10), dtype = int)
+            z[label[i]] = 1
             new_label.append(z);
-            
-    return (image, new_label);
+
+    train = zip(image, new_label);
+    return (train);
 
 if __name__ == "__main__":
     main();
