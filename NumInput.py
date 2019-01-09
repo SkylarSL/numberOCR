@@ -2,8 +2,6 @@
 
 from PIL import Image
 import numpy as np
-import gzip
-from mnist import MNIST
 from mlxtend.data import loadlocal_mnist
 
 def main():
@@ -90,9 +88,7 @@ def getMNIST():
     image, label = loadlocal_mnist(
         "./train-images.idx3-ubyte",
         "./train-labels.idx1-ubyte")
-
-    print(image.shape[0])
-    print(label.shape[0])
+    
     new_label = [];
 
     for i in range(label.shape[0]):
@@ -100,6 +96,7 @@ def getMNIST():
             z = np.zeros((10,), dtype = int)
             z[label[i,]] = 1
             new_label.append(z);
+            
     return (image, new_label);
 
 if __name__ == "__main__":
