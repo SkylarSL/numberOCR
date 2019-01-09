@@ -2,6 +2,7 @@
 import numpy as np
 #imports the input
 import numInput
+import random
 
 # network with layer size:
 # input layer = 900,  30*30 pixels
