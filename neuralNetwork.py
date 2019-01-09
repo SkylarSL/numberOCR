@@ -1,17 +1,19 @@
 # -*- coding: utf-8 -*-
 import numpy as np
-
 #imports the input
-#import numInput
+import numInput
 
 # network with layer size:
 # input layer = 900,  30*30 pixels
 # 1st hidden layer = 15
 # output layer =  10
 
+images = numInput.getMNIST()[0];
+value = numInput.getMNIST()[1];
+
 class neuralNetwork:
     def __init__(self):
-        self.weights = [np.random.randn(15, 900), np.random.randn(10, 15)]
+        self.weights = [np.random.randn(15, 728), np.random.randn(10, 15)]
         self.biases = [np.random.randn(15, 1), np.random.randn(10, 1)]
 
     def getOuput(self, a):
@@ -19,12 +21,6 @@ class neuralNetwork:
             a = sigmoid(self.weights[i]*a + self.biases[i])
         return a
 
-    def backprop(self, actual, expect):
-        return "";
-
-    def cost(self, actual_value, expected_value):
-        return (actual_value - expected_value);
-    
     def backprop(self, a, b):
         gradient_b = [np.zeros(np.shape(b)) for b in self.weights]
         gradient_w = [np.zeros(np.shape(w)) for w in self.biases]
@@ -43,6 +39,8 @@ class neuralNetwork:
         delta = self.weights[1].transpose*delta*primeSigmoid(non_sigmoid[0])
         gradient_w[0] = delta
         gradient_b[0] = delta*activation[0].transpose
+        
+        return (gradient_w,gradient_b)
 
 def sigmoid(x):
     return 1.0 / (1.0 + np.exp(-x))
@@ -50,8 +48,7 @@ def sigmoid(x):
 def primeSigmoid(x):
     return sigmoid(x)*(1.0-sigmoid(x))
 
-
 samp = neuralNetwork()
-out = samp.getOuput(np.matrix(np.arange(900).reshape(900, 1)))
+out = samp.getOuput(np.matrix(np.arange(728).reshape(728, 1)))
 print("output layer: ", "\n", out)
 print("The number is likely: ", np.argmax(out, 0)[0, 0] + 1)
