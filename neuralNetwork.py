@@ -21,6 +21,22 @@ class neuralNetwork:
             a = sigmoid(self.weights[i]*a + self.biases[i])
         return a
 
+    def SGD(self, trainingData, totalData, miniBatchSize, trainingTime, testData = None):
+        if testData:
+            nTest = len(testData)
+        n = len(trainingData)
+        for i in range(totalData):
+            random.shuffle(trainingData);
+            miniBatches = [trainingData[k: k + miniBatchSize]
+                           for k in range(0, n, miniBatchSize)]
+            for miniBatch in miniBatches:
+                self.update_wb(miniBatch, trainingTime)
+            if testData:
+                print("Epoch" + i + ":" + self.evaluate(testData)
+                      + "/" + nTest)
+            else:
+                print("Epoch" + format(i) + "complete")
+    
     def update_wb(self,mini_batch,eta):
         gradient_b = [np.zeros(np.shape(b)) for b in self.weights]
         gradient_w = [np.zeros(np.shape(w)) for w in self.biases]
