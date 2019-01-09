@@ -37,6 +37,18 @@ class neuralNetwork:
             else:
                 print("Epoch" + format(i) + "complete")
 
+    def update_wb(self, mini_batch, eta):
+        gradient_b = [np.zeros(np.shape(b)) for b in self.weights]
+        gradient_w = [np.zeros(np.shape(w)) for w in self.biases]
+
+        for x, y in mini_batch:
+            nudge_gb, nudge_gw = self.backprop(x, y)
+            for i in range(len(gradient_b)):
+                gradient_b[i] = gradient_b[i] + nudge_gb[i]
+                gradient_w[i] = gradient_w[i] + nudge_gw[i]
+
+        self.weights = self.weights - (eta / len(mini_batch)) * gradient_w
+        self.biases = self.biases - (eta / len(mini_batch)) * gradient_b
 
     def backprop(self, actual, expect):
         bias = [np.zeros(b.shape) for b in self.biases]
