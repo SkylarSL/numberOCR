@@ -2,66 +2,64 @@
 
 from PIL import Image
 import numpy as np
-import gzip
-from mnist import MNIST
 from mlxtend.data import loadlocal_mnist
 
 def main():
     input();
     getMNIST()
 
-def input():
-    img = Image.open("eight.png", "r")
-
-    height, width = img.size
-
-    nullLine = [];
-    nullLineRGB = [];
-    blackLine = [];
-    blackLineRGB = [];
-    for i in range(width):
-        for j in range(height):
-            r, g, b = img.getpixel((j, i))
-            total = r + g + b;
-            nullLine.append(total)
-            nullLineRGB.append([r, g, b])
-        line = search(nullLine)
-        if line == True:
-            blackLine.append(nullLine);
-            blackLineRGB.append(nullLineRGB);
-        nullLine = []
-        nullLineRGB = []
-
-    height, width = len(blackLine[0]), len(blackLine)
-    blackLine2 = [];
-    finalImage = [];
-    for i in range(height):
-        for j in range(width):
-            x = blackLine[j][i]
-            y = blackLineRGB[j][i]
-            nullLine.append(x)
-            nullLineRGB.append(y)
-        line = search(nullLine)
-        if line == True:
-            blackLine2.append(nullLine);
-            finalImage = finalImage + nullLineRGB;
-        nullLine = []
-        nullLineRGB = []
-
-    test = blackLine2
-    test = toGreyScale(test)
-
-    x, y = len(blackLine2), len(blackLine2[0]);
-    finalImage = np.array(finalImage)
-    data = np.zeros((y, x, 3), dtype=np.uint8)
-
-    sum = 0
-    for i in range(x):
-        for j in range(y):
-            data[j, i] = finalImage[sum]
-            sum += 1;
-    imgg = Image.fromarray(data).resize((30, 30), Image.ANTIALIAS);
-    #imgg.show()
+#def input():
+##    img = Image.open("eight.png", "r")
+##
+##    height, width = img.size
+#
+#    nullLine = [];
+#    nullLineRGB = [];
+#    blackLine = [];
+#    blackLineRGB = [];
+#    for i in range(width):
+#        for j in range(height):
+#            r, g, b = img.getpixel((j, i))
+#            total = r + g + b;
+#            nullLine.append(total)
+#            nullLineRGB.append([r, g, b])
+#        line = search(nullLine)
+#        if line == True:
+#            blackLine.append(nullLine);
+#            blackLineRGB.append(nullLineRGB);
+#        nullLine = []
+#        nullLineRGB = []
+#
+#    height, width = len(blackLine[0]), len(blackLine)
+#    blackLine2 = [];
+#    finalImage = [];
+#    for i in range(height):
+#        for j in range(width):
+#            x = blackLine[j][i]
+#            y = blackLineRGB[j][i]
+#            nullLine.append(x)
+#            nullLineRGB.append(y)
+#        line = search(nullLine)
+#        if line == True:
+#            blackLine2.append(nullLine);
+#            finalImage = finalImage + nullLineRGB;
+#        nullLine = []
+#        nullLineRGB = []
+#
+#    test = blackLine2
+#    test = toGreyScale(test)
+#
+#    x, y = len(blackLine2), len(blackLine2[0]);
+#    finalImage = np.array(finalImage)
+#    data = np.zeros((y, x, 3), dtype=np.uint8)
+#
+#    sum = 0
+#    for i in range(x):
+#        for j in range(y):
+#            data[j, i] = finalImage[sum]
+#            sum += 1;
+#    imgg = Image.fromarray(data).resize((30, 30), Image.ANTIALIAS);
+#    #imgg.show()
 
 def search(arr):
     length = len(arr)
