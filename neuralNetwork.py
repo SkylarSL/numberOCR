@@ -20,7 +20,7 @@ class neuralNetwork:
         for i in range(len(self.weights)):
             a = sigmoid(self.weights[i]*a + self.biases[i])
         return a
-<<<<<<< HEAD
+
     def update_wb(self,mini_batch,eta):
         gradient_b = [np.zeros(np.shape(b)) for b in self.weights]
         gradient_w = [np.zeros(np.shape(w)) for w in self.biases]
@@ -40,10 +40,6 @@ class neuralNetwork:
         return (actual_value - expected_value);
     
     def backprop(self, a, y):
-=======
-
-    def backprop(self, a, b):
->>>>>>> 53cc5b51ebb4a2c2a3d5baf9b97f44967cc0ff0e
         gradient_b = [np.zeros(np.shape(b)) for b in self.weights]
         gradient_w = [np.zeros(np.shape(w)) for w in self.biases]
         
