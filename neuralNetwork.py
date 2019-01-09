@@ -72,7 +72,7 @@ class neuralNetwork:
         
         delta = self.weights[1].transpose*delta*primeSigmoid(non_sigmoid[0])
         gradient_w[0] = delta
-        gradient_b[0] = delta*activation[0].transpose
+        gradient_b[0] = delta*activation[0].transpose()
         
         return (gradient_w,gradient_b)
 
