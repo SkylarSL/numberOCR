@@ -2,21 +2,21 @@
 import numpy as np
 import random
 #imports the input
-import numInput
+import NumInput
 
 # network with layer size:
-# input layer = 900,  30*30 pixels
-# 1st hidden layer = 15
+# input layer = 784
+# 1st hidden layer = 30
 # output layer =  10
 
-training = numInput.getMNIST();
+training = NumInput.getMNIST();
 
 class neuralNetwork:
     def __init__(self):
-        self.weights = [np.random.randn(15, 728), np.random.randn(10, 15)]
-        self.biases = [np.random.randn(15, 1), np.random.randn(10, 1)]
+        self.weights = [np.random.randn(30,784), np.random.randn(10,30)]
+        self.biases = [np.random.randn(30, 1), np.random.randn(10, 1)]
 
-    def getOuput(self, a):
+    def getOutput(self, a):
         for i in range(len(self.weights)):
             a = sigmoid(np.dot(self.weights[i], a) + self.biases[i])
         return a
@@ -30,50 +30,70 @@ class neuralNetwork:
             miniBatches = [trainingData[k: k + miniBatchSize]
                            for k in range(0, n, miniBatchSize)]
             for miniBatch in miniBatches:
-                self.update(miniBatch, trainingTime)
+                self.update_wb(miniBatch, trainingTime)
             if testData:
-                print("Epoch" + i + ":" + self.evaluate(testData)
-                      + "/" + nTest)
+                print("Epoch" + str(i) + ":" + str(self.evaluate(testData))
+                      + "/" + str(nTest))
             else:
                 print("Epoch" + format(i) + "complete")
+    def update_wb(self,mini_batch,eta):
+        gradient_b = [np.zeros(np.shape(b)) for b in self.biases]
+        gradient_w = [np.zeros(np.shape(w)) for w in self.weights]
+        for x,y in mini_batch:
+            nudge_gb, nudge_gw = self.backprop(x,y)
+            for i in range(len(gradient_b)):
+                #print(np.shape(gradient_w[i]),np.shape(nudge_gw[i]))
+                gradient_b[i] = gradient_b[i] + nudge_gb[i]
+                gradient_w[i] = gradient_w[i] + nudge_gw[i]
+        for i in range(len(self.weights)):
+            #print(len(self.weights[i][1]),len(gradient_w[i]))
+            self.weights[i] = self.weights[i] - ((eta/len(mini_batch))*gradient_w[i])
+            self.biases[i] = self.biases[i] - ((eta/len(mini_batch))*gradient_b[i])
 
 
-    def backprop(self, actual, expect):
-        bias = [np.zeros(b.shape) for b in self.biases]
-        weight = [np.zeros(w.shape) for w in self.weights]
+    def backprop(self, a, y):
+        gradient_b = [np.zeros(np.shape(b)) for b in self.biases]
+        gradient_w = [np.zeros(np.shape(w)) for w in self.weights]
 
-        activation = actual;
-        activations = [actual];
+        activation = [a]
+        non_sigmoid = []
+        for i in range(len(self.weights)):
+            temp = np.dot(self.weights[i],a)+self.biases[i]
+            #print("temp",temp)
+            non_sigmoid.append(temp)
+            a=sigmoid(temp)
+            activation.append(a)
+        
 
-        zvector = [];
+        delta = np.multiply((activation[2]-y),primeSigmoid(non_sigmoid[1]))
+        gradient_w[1] = delta*(activation[1]).transpose()
+        gradient_b[1] = delta
+        #print("l",np.shape(gradient_w[1]))
+        delta = np.multiply(self.weights[1].transpose()*delta,primeSigmoid(non_sigmoid[0]))
+        gradient_b[0] = delta
+        gradient_w[0] = delta*activation[0].transpose()
+        
+        return(gradient_b,gradient_w)
+    
 
-        for b, w in zip(self.biases, self.weights):
-            z = np.dot(w, activation) + b;
-            zvector.append(z);
-            activation = sigmoid(z)
-            activations.append(activation);
-
-        delta_cost = self.cost(activations[2], expect) * primeSigmoid(zvector[2])
-        bias[-1] = delta_cost;
-        weight[-1] = np.dot(delta_cost, activations[1].transpose())
-
-        delta_cost = np.dot(self.weights[1].transpose(), delta_cost) * \
-                     primeSigmoid(zvector[-1])
-        bias[-1] = delta_cost
-        weight[-1] = np.dot(delta_cost, activations[0].transpose())
-
-        return (bias, weight);
-
-    def cost(self, actual_value, expected_value):
-        return (actual_value - expected_value);
+    def evaluate(self, test_data):
+        correct = 0
+        for i in test_data:
+            if np.argmax(self.getOutput(i[0]),0)[0]==np.argmax(i[1],0)[0]:
+                correct+=1
+        return correct
 
 def sigmoid(x):
     return 1.0 / (1.0 + np.exp(-x))
 
 def primeSigmoid(x):
-    return sigmoid(x)*(1.0-sigmoid(x))
+    return np.multiply(sigmoid(x),(1.0-sigmoid(x)))
 
 samp = neuralNetwork()
-out = samp.getOuput(np.matrix(np.arange(728).reshape(728, 1)))
-print("output layer: ", "\n", out)
-print("The number is likely: ", np.argmax(out, 0)[0, 0])
+samp.SGD(training[:50000],3,10,3.0,training[50000:])
+#outfile = open("weightandbias.txt",'w')
+#outfile.write(str(np.array(samp.weights)))
+#outfile.write('\n')
+#outfile.write(str(samp.biases))
+#outfile.close()
+
